@@ -138,11 +138,12 @@ export class OrderDetailPage implements OnInit {
         this.token = data.uid.fcm_token;
         
         console.log('Dirección:', this.deliveryAddress);
-        this.geocodeAddress(this.deliveryAddress);
-        console.log('Restaurante Latitude:', this.latV);
-        console.log('Restaurante Longitude:', this.lngV);
-
-        
+        if (this.latC === undefined || this.lngC === undefined) {
+          console.log('Latitud o longitud de cliente no definida. Iniciando geocodificación...');
+          this.geocodeAddress(this.deliveryAddress);
+        } else {
+          console.log('Latitud y longitud de cliente ya definidas:', this.latC, this.lngC);
+        }
         
         this.api.getProfile(data.vid.uid).then((dataU) => {
           console.log('driver status cahcnage----->', dataU);
@@ -322,104 +323,83 @@ export class OrderDetailPage implements OnInit {
   }
 
   open_map_vanue(lat, lng, type) {
-    this.typeAddress =type
+    this.typeAddress = type;
     this.showMap = true;
-    
-    this.geolocation
-      .getCurrentPosition()
-      .then(resp => {
-        let latitude = resp.coords.latitude;
-        let longitude = resp.coords.longitude;
-
-        console.log('Ubicacion Real Latitude:', latitude);
-        console.log('Ubicacion Real Longitude:', longitude);
-       
-        let mapEle: HTMLElement = document.getElementById('map');
-        let panelEle: HTMLElement = document.getElementById('panel');
-        let myLatLng = { lat: latitude, lng: longitude };
-        let myLatLng2 = {lat: this.latC, lng: this.latC};
-        let myLatLng3 = {lat: this.latV, lng: this.lngV};
-        // create map
-
-        this.waypoints = [
-          {
-            location: new google.maps.LatLng(latitude, longitude),
-            stopover: true,
-          },
-          {
-            location: new google.maps.LatLng(this.latV, this.lngV),
-            stopover: true,
-            
-          },
-          {
-            location: new google.maps.LatLng(this.latC, this.lngC),
-            stopover: true,
+  
+    this.geolocation.watchPosition().subscribe((resp) => {
+      
+      let latitude = resp.coords.latitude;
+      let longitude = resp.coords.longitude;
+  
+      
+      
+      console.log('Ubicación Actual Latitude:', latitude);
+      console.log('Ubicación Actual Longitude:', longitude);
+      console.log("Nueva ubicación: ", latitude, longitude);
+  
+      let mapEle: HTMLElement = document.getElementById('map');
+      let panelEle: HTMLElement = document.getElementById('panel');
+      let myLatLng = { lat: latitude, lng: longitude };
+  
+      this.waypoints = [
+        {
+          location: new google.maps.LatLng(latitude, longitude),
+          stopover: true,
+        },
+        {
+          location: new google.maps.LatLng(this.latV, this.lngV),
+          stopover: true,
+        },
+        {
+          location: new google.maps.LatLng(this.latC, this.lngC),
+          stopover: true,
+        }
+      ];
+  
+      this.map = new google.maps.Map(mapEle, {
+        center: myLatLng,
+        zoom: 12,
+      });
+      this.directionsDisplay.setMap(this.map);
+      this.directionsDisplay.setPanel(panelEle);
+  
+      google.maps.event.addListenerOnce(this.map, 'idle', () => {
+        mapEle.classList.add('show-map');
+  
+        this.directionsService.route({
+          origin: new google.maps.LatLng(latitude, longitude),
+          destination: new google.maps.LatLng(this.latC, this.lngC),
+          waypoints: this.waypoints,
+          travelMode: google.maps.TravelMode.DRIVING,
+          avoidTolls: true,
+        }, (response, status) => {
+          if (status === google.maps.DirectionsStatus.OK) {
+            console.log(response);
+            this.directionsDisplay.setDirections(response);
+          } else {
+            console.error('Error en la solicitud de direcciones:', status);
+            alert('No se pudieron mostrar las direcciones debido a: ' + status);
           }
-          
-        ];
-
-
-        this.map = new google.maps.Map(mapEle, {
-          center: myLatLng,
-          zoom: 12
         });
-        this.directionsDisplay.setMap(this.map);
-        this.directionsDisplay.setPanel(panelEle);
-
-
-        google.maps.event.addListenerOnce(this.map, 'idle', () => {
-         
-          mapEle.classList.add('show-map');
-          //this.calculateRoute();
-         
-        /*  this.waypoints.forEach(waypoint => {
-            var point = new google.maps.LatLng(waypoint.location.lat, waypoint.location.lng);
-            this.bounds.extend(point);
-          });
-          
-          this.map.fitBounds(this.bounds);*/
-
-          this.waypoints.forEach((waypoint, index) => {
-            
-          
-            new google.maps.Marker({
-              position: waypoint.location,
-              map: this.map,
-              // Marcador personalizado
-              label: {
-                text: (index + 1).toString(), // Número del waypoint
-                color: 'white', // Color del texto
-                fontSize: '16px', // Tamaño de la fuente
-              },
-            });
-          });
-
-          
-          
-          this.directionsService.route({
-            origin: new google.maps.LatLng(latitude, longitude),
-            destination: new google.maps.LatLng(this.latC, this.lngC),
-            waypoints: this.waypoints,
-
-
-            travelMode: google.maps.TravelMode.DRIVING,
-            avoidTolls: true
-          }, (response, status) => {
-            if (status === google.maps.DirectionsStatus.OK) {
-              console.log(response);
-              this.directionsDisplay.setDirections(response);
-            } else {
-              console.error('Error in directions request:', status);
-              alert('Could not display directions due to: ' + status);
-              
-            }
-          });
-        });
-      }).catch(error => {
-        console.error('Geolocation error:', error);
-      })
-
+      });
+      
+  
+      this.addMarker(latitude, longitude); // Marcador de origen (posición actual)
+      this.addMarker(this.latV, this.lngV); // Marcador del restaurante
+      this.addMarker(this.latC, this.lngC); // Marcador de la dirección de entrega
+    });
   }
+  
+
+  // Helper function to add markers without labels
+addMarker(lat: number, lng: number) {
+  new google.maps.Marker({
+      position: { lat, lng },
+      map: this.map,
+      
+      content: document.createElement('div')
+  });
+}
 
   goMaps(){
     if(this.typeAddress==1)
