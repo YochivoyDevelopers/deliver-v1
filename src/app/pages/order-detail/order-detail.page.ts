@@ -51,8 +51,11 @@ export class OrderDetailPage implements OnInit {
   waypoints: any;
   showMap: any = false;
   typeAddress: any = 1;
-
+  userMarker: any;
+  markers: any;
   geocoder: any;
+  userCircle: any;
+  isMapInitialized: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -325,87 +328,155 @@ export class OrderDetailPage implements OnInit {
   open_map_vanue(lat, lng, type) {
     this.typeAddress = type;
     this.showMap = true;
+    this.userCircle = null;
   
+    
+    console.log('Abriendo el mapa para la dirección:', type);
+  
+    // Observa la posición del usuario
     this.geolocation.watchPosition().subscribe((resp) => {
-      
-      let latitude = resp.coords.latitude;
-      let longitude = resp.coords.longitude;
+      const { latitude, longitude, accuracy } = resp.coords;
+      const myLatLng = { lat: latitude, lng: longitude };
   
-      
-      
       console.log('Ubicación Actual Latitude:', latitude);
       console.log('Ubicación Actual Longitude:', longitude);
-      console.log("Nueva ubicación: ", latitude, longitude);
+      console.log('Precisión de la ubicación:', accuracy);
   
-      let mapEle: HTMLElement = document.getElementById('map');
-      let panelEle: HTMLElement = document.getElementById('panel');
-      let myLatLng = { lat: latitude, lng: longitude };
+      // Inicializa el mapa solo la primera vez
+      if (!this.map) {
+        console.log('Inicializando el mapa...');
+        this.initMap(myLatLng);
+        
+        console.log('Mapa inicializado con éxito.');
+      } else {
+        console.log('El mapa ya está inicializado, no se volverá a centrar.');
+      }
   
-      this.waypoints = [
-        {
-          location: new google.maps.LatLng(latitude, longitude),
-          stopover: true,
-        },
-        {
-          location: new google.maps.LatLng(this.latV, this.lngV),
-          stopover: true,
-        },
-        {
-          location: new google.maps.LatLng(this.latC, this.lngC),
-          stopover: true,
-        }
-      ];
+      // Actualiza o crea el círculo que representa la ubicación del usuario
+      this.updateUserCircle(latitude, longitude, accuracy);
   
-      this.map = new google.maps.Map(mapEle, {
-        center: myLatLng,
-        zoom: 12,
-      });
-      this.directionsDisplay.setMap(this.map);
-      this.directionsDisplay.setPanel(panelEle);
-  
-      google.maps.event.addListenerOnce(this.map, 'idle', () => {
-        mapEle.classList.add('show-map');
-  
-        this.directionsService.route({
-          origin: new google.maps.LatLng(latitude, longitude),
-          destination: new google.maps.LatLng(this.latC, this.lngC),
-          waypoints: this.waypoints,
-          travelMode: google.maps.TravelMode.DRIVING,
-          avoidTolls: true,
-        }, (response, status) => {
-          if (status === google.maps.DirectionsStatus.OK) {
-            console.log(response);
-            this.directionsDisplay.setDirections(response);
-          } else {
-            console.error('Error en la solicitud de direcciones:', status);
-            alert('No se pudieron mostrar las direcciones debido a: ' + status);
-          }
-        });
-      });
-      
-  
-      this.addMarker(latitude, longitude); // Marcador de origen (posición actual)
-      this.addMarker(this.latV, this.lngV); // Marcador del restaurante
-      this.addMarker(this.latC, this.lngC); // Marcador de la dirección de entrega
+    
+      // Solicita la ruta si ya se ha inicializado el mapa
+      this.requestDirections(latitude, longitude);
     });
   }
   
+  // Función para inicializar el mapa
+  initMap(myLatLng) {
+    let mapEle = document.getElementById('map');
+    let panelEle = document.getElementById('panel');
+  
+    this.map = new google.maps.Map(mapEle, {
+      center: myLatLng, // Centro inicial del mapa
+      zoom: 12,
+    });
+    this.directionsDisplay.setMap(this.map);
+    this.directionsDisplay.setPanel(panelEle);
+  
+    google.maps.event.addListenerOnce(this.map, 'idle', () => {
+      mapEle.classList.add('show-map');
+      console.log('El mapa está listo y se ha mostrado en la interfaz.');
+    });
+  
+    this.isMapInitialized = true;
 
-  // Helper function to add markers without labels
-addMarker(lat: number, lng: number) {
-  new google.maps.Marker({
+    // Agrega los marcadores solo una vez
+    this.addMarker(this.latV, this.lngV); // Marcador del restaurante
+    this.addMarker(this.latC, this.lngC); // Marcador de la dirección de entrega
+  }
+  
+  // Función para actualizar el círculo del usuario
+  updateUserCircle(latitude, longitude, accuracy) {0
+    console.log('Actualizando el círculo del usuario...');
+
+    if (this.userCircle) {
+      console.log('Actualizando el centro y radio del círculo existente.');
+      this.userCircle.setCenter(new google.maps.LatLng(latitude, longitude));
+      this.userCircle.setRadius(5); // Actualiza el radio con la precisión
+    } else {
+      console.log('Creando un nuevo círculo para la ubicación del usuario.');
+      this.userCircle = new google.maps.Circle({
+        center: new google.maps.LatLng(latitude, longitude),
+        radius: 5, // Usa la precisión del GPS
+        fillColor: '#4285F4',
+        fillOpacity: 0.6,
+        strokeColor: '#4285F4',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        map: this.map,
+      });
+    }
+
+    if(this.isMapInitialized){
+      console.log('El mapa esta inicializado, no se centrara de nuevo.');
+      return;
+    }
+
+    this.isMapInitialized = true;
+  }
+  
+  // Función para solicitar direcciones
+  requestDirections(latitude, longitude) {
+    console.log('Solicitando direcciones desde:', latitude, longitude);
+    if (this.map) {
+
+      const origin = new google.maps.LatLng(latitude, longitude);
+      const destination = new google.maps.LatLng(this.latC, this.lngC);
+      const waypoint = new google.maps.LatLng(this.latV, this.lngV);
+
+      this.directionsService.route({
+        origin: origin,
+        destination: destination,
+        waypoints: [{location: waypoint, stopover:true }],
+        travelMode: google.maps.TravelMode.DRIVING,
+        avoidTolls: true,
+      }, (response, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+          console.log('Direcciones recibidas con éxito.');
+          this.directionsDisplay.setDirections(response);
+          // Desactivar ajuste automático del zoom
+        this.directionsDisplay.setOptions({ preserveViewport: true });
+        } else {
+          
+          
+          console.error('Error en la solicitud de direcciones:', status);
+          alert('No se pudieron mostrar las direcciones debido a: ' + status);
+        }
+      });
+    } else {
+      console.warn('El mapa no está inicializado, no se pueden solicitar direcciones.');
+    }
+  }
+  
+  // Función para agregar un marcador y devolverlo
+  addMarker(lat, lng) {
+    console.log('Agregando marcador en:', lat, lng);
+    let marker = new google.maps.Marker({
       position: { lat, lng },
       map: this.map,
-      
-      content: document.createElement('div')
-  });
-}
-
-  goMaps(){
-    if(this.typeAddress==1)
-    window.location.href = "https://www.google.com/maps/search/?api=1&query="+this.latV+","+this.lngV;
-    if(this.typeAddress==2)
-    window.location.href = "https://www.google.com/maps/search/?api=1&query="+this.latC+","+this.lngC;
+    });
+    return marker;
   }
+  
+  // Función para limpiar los marcadores en el mapa
+  clearMarkers() {
+    console.log('Limpiando marcadores del mapa.');
+    this.markers.forEach(marker => marker.setMap(null));
+    this.markers = [];
+  }
+  
+  // Función para ir a Google Maps
+  goMaps() {
+    if (this.typeAddress == 1) {
+      console.log('Redirigiendo a Google Maps para la dirección del restaurante.');
+      window.location.href = "https://www.google.com/maps/search/?api=1&query=" + this.latV + "," + this.lngV;
+    }
+    if (this.typeAddress == 2) {
+      console.log('Redirigiendo a Google Maps para la dirección de entrega.');
+      window.location.href = "https://www.google.com/maps/search/?api=1&query=" + this.latC + "," + this.lngC;
+    }
+  }
+  
+  
 
 }
