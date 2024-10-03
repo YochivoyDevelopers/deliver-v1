@@ -56,6 +56,8 @@ export class OrderDetailPage implements OnInit {
   geocoder: any;
   userCircle: any;
   isMapInitialized: boolean;
+  isRouteInitialized: boolean = false;
+  restaurantMarker:any;
 
   constructor(
     private route: ActivatedRoute,
@@ -346,7 +348,6 @@ export class OrderDetailPage implements OnInit {
       if (!this.map) {
         console.log('Inicializando el mapa...');
         this.initMap(myLatLng);
-        
         console.log('Mapa inicializado con éxito.');
       } else {
         console.log('El mapa ya está inicializado, no se volverá a centrar.');
@@ -355,8 +356,7 @@ export class OrderDetailPage implements OnInit {
       // Actualiza o crea el círculo que representa la ubicación del usuario
       this.updateUserCircle(latitude, longitude, accuracy);
   
-    
-      // Solicita la ruta si ya se ha inicializado el mapa
+     
       this.requestDirections(latitude, longitude);
     });
   }
@@ -378,12 +378,60 @@ export class OrderDetailPage implements OnInit {
       console.log('El mapa está listo y se ha mostrado en la interfaz.');
     });
   
+    // Agregar el botón para centrar en la ubicación del usuario
+  const centerControlDiv = document.createElement('div');
+  this.createCenterControl(centerControlDiv, this.map);
+
+  // Posicionar el botón en la interfaz del mapa
+  this.map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+
     this.isMapInitialized = true;
 
     // Agrega los marcadores solo una vez
-    this.addMarker(this.latV, this.lngV); // Marcador del restaurante
-    this.addMarker(this.latC, this.lngC); // Marcador de la dirección de entrega
+    //this.addMarker(this.latV, this.lngV); // Marcador del restaurante
+   // this.addMarker(this.latC, this.lngC); // Marcador de la dirección de entrega
   }
+
+  //Funcion para crear el boton de centrar ubicacion
+  createCenterControl(controlDiv, map){
+    // Estilo del botón
+    const controlUI = document.createElement('div');
+    controlUI.style.backgroundColor = '#fff';
+    controlUI.style.border = '2px solid #fff';
+    controlUI.style.borderRadius = '3px';
+    controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+    controlUI.style.cursor = 'pointer';
+    controlUI.style.marginTop = '10px';
+    controlUI.style.marginBottom = '10px';
+    controlUI.style.textAlign = 'center';
+    controlUI.title = 'Haz clic para centrar en tu ubicación';
+    controlDiv.appendChild(controlUI);
+
+    // Texto del botón
+    const controlText = document.createElement('div');
+    controlText.style.color = 'rgb(25,25,25)';
+    controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+    controlText.style.fontSize = '16px';
+    controlText.style.lineHeight = '38px';
+    controlText.style.paddingLeft = '5px';
+    controlText.style.paddingRight = '5px';
+    controlText.innerHTML = 'Centrar en mi ubicación';
+    controlUI.appendChild(controlText);
+
+    // Evento para centrar el mapa cuando se hace clic en el botón
+    controlUI.addEventListener('click', () => {
+      console.log('Centrando el mapa en la ubicación del usuario...');
+      if (this.userCircle) {
+        const userLocation = this.userCircle.getCenter();
+        map.panTo(userLocation); // Centrar el mapa en la ubicación del usuario
+      } else {
+        console.warn('No se encontró la ubicación del usuario para centrar el mapa.');
+      }
+    });
+  }
+  
+
+  
   
   // Función para actualizar el círculo del usuario
   updateUserCircle(latitude, longitude, accuracy) {0
@@ -392,12 +440,12 @@ export class OrderDetailPage implements OnInit {
     if (this.userCircle) {
       console.log('Actualizando el centro y radio del círculo existente.');
       this.userCircle.setCenter(new google.maps.LatLng(latitude, longitude));
-      this.userCircle.setRadius(5); // Actualiza el radio con la precisión
+      this.userCircle.setRadius(5);
     } else {
       console.log('Creando un nuevo círculo para la ubicación del usuario.');
       this.userCircle = new google.maps.Circle({
         center: new google.maps.LatLng(latitude, longitude),
-        radius: 5, // Usa la precisión del GPS
+        radius: 5, 
         fillColor: '#4285F4',
         fillOpacity: 0.6,
         strokeColor: '#4285F4',
@@ -413,6 +461,8 @@ export class OrderDetailPage implements OnInit {
     }
 
     this.isMapInitialized = true;
+
+    
   }
   
   // Función para solicitar direcciones
@@ -424,6 +474,23 @@ export class OrderDetailPage implements OnInit {
       const destination = new google.maps.LatLng(this.latC, this.lngC);
       const waypoint = new google.maps.LatLng(this.latV, this.lngV);
 
+      const distance = this.calculateDistance(origin, waypoint);
+
+      // Verifica si el usuario ha llegado al restaurante
+      if (distance < 50) { // Ajusta el umbral según sea necesario
+        console.log('El usuario ha llegado al restaurante. Eliminando el marcador y actualizando la ruta.');
+
+        // Elimina el marcador del restaurante
+        if (this.restaurantMarker) {
+            this.restaurantMarker.setMap(null); // Elimina el marcador del mapa
+            this.restaurantMarker = null; // Limpia la referencia
+        }
+
+        // Actualiza la ruta solo hacia el destino
+        this.updateRouteToDestination(latitude, longitude);
+        return; // Sale de la función para no solicitar direcciones de nuevo
+    }
+
       this.directionsService.route({
         origin: origin,
         destination: destination,
@@ -433,7 +500,16 @@ export class OrderDetailPage implements OnInit {
       }, (response, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
           console.log('Direcciones recibidas con éxito.');
-          this.directionsDisplay.setDirections(response);
+
+        // Mostrar la ruta y ajustar el zoom para mostrar toda la ruta solo la primera vez
+        this.directionsDisplay.setDirections(response);
+
+        if (!this.isRouteInitialized) {
+          console.log('Ajustando el mapa para mostrar la ruta completa.');
+          // Este ajuste solo se realiza una vez para que se muestre la ruta completa
+          this.map.fitBounds(response.routes[0].bounds);
+          this.isRouteInitialized = true; // Indicar que la ruta ya se ha mostrado por primera vez
+        }  
           // Desactivar ajuste automático del zoom
         this.directionsDisplay.setOptions({ preserveViewport: true });
         } else {
@@ -476,6 +552,65 @@ export class OrderDetailPage implements OnInit {
       window.location.href = "https://www.google.com/maps/search/?api=1&query=" + this.latC + "," + this.lngC;
     }
   }
+
+  // Función para actualizar la ruta solo hacia el destino
+updateRouteToDestination(latitude, longitude) {
+  console.log('Actualizando la ruta solo hacia el destino...');
+  const origin = new google.maps.LatLng(latitude, longitude);
+  const destination = new google.maps.LatLng(this.latC, this.lngC);
+
+  this.directionsService.route({
+      origin: origin,
+      destination: destination,
+      travelMode: google.maps.TravelMode.DRIVING,
+      avoidTolls: true,
+  }, (response, status) => {
+      if (status === google.maps.DirectionsStatus.OK) {
+          console.log('Direcciones recibidas con éxito hacia el destino.');
+          this.directionsDisplay.setDirections(response);
+
+          if (!this.isRouteInitialized) {
+              console.log('Ajustando el mapa para mostrar la ruta completa.');
+              this.map.fitBounds(response.routes[0].bounds);
+              this.isRouteInitialized = true;
+          }
+          this.directionsDisplay.setOptions({ preserveViewport: true });
+      } else {
+          console.error('Error en la solicitud de direcciones:', status);
+          alert('No se pudieron mostrar las direcciones hacia el destino debido a: ' + status);
+      }
+  });
+}
+
+// Función para calcular la distancia entre dos puntos
+calculateDistance(pointA, pointB) {
+  const latA = pointA.lat();
+  const lngA = pointA.lng();
+  const latB = pointB.lat();
+  const lngB = pointB.lng();
+  const R = 6371000; // Radio de la Tierra en metros
+  const dLat = this.degreesToRadians(latB - latA);
+  const dLng = this.degreesToRadians(lngB - lngA);
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(this.degreesToRadians(latA)) * Math.cos(this.degreesToRadians(latB)) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // Distancia en metros
+}
+
+// Función auxiliar para convertir grados a radianes
+degreesToRadians(degrees) {
+  return degrees * (Math.PI / 180);
+}
+
+// Función para agregar un marcador del restaurante
+addRestaurantMarker(lat, lng) {
+  this.restaurantMarker = new google.maps.Marker({
+      position: { lat, lng },
+      map: this.map,
+      title: 'Restaurante'
+  });
+}
   
   
 
