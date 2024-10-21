@@ -1,10 +1,72 @@
- .segment_div{
+ion-title{
+    color: white;
+}
+
+.headerbg{
+    
+    background-color: white;
+}
+
+.demo{
+    border-radius: 0 30px 0 0px !important;
+    background-color: white;
+    
+    border: 3px solid white;
+}
+
+.section-bg-color{
+    
+    background-color: red ;
+   
+}
+.espaciobg{
+    
+    
+    border-radius: 0 30px 0 0px !important;
+    background-color: var(--blanco);
+    
+}
+
+header {
+    
+    width: 100%;
+    z-index: 10;
+    transition: all 0.2s linear;
+    //position: absolute;
+    z-index: 100;
+   
+}
+
+nav{
+    
+    border-radius: 0 0 0 30px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    align-content: center;
+    width: 100%;
+    height: 9vh;
+    height: 4rem;
+    transition: all 0.2s linear;
+    padding: 30px 10% 30px;
+    background-color: red;
+    
+   
+}
+
+
+.segment_div{
+    
+    
         display: flex;
         margin-top: 20px;
+        flex-direction: row !important;
+        align-items: center;
+        gap: 5rem;
         border-bottom: 1px solid lightgray;
         justify-content: space-around;
         ion-label {
-            color: gray;
+            color: black;
             padding-bottom: 10px;
             width: 100%;
             text-align: center;
@@ -24,29 +86,45 @@
     }
 
     .card_div{
+        display: flex;
         width: 100%;
-        box-shadow: 0px 1px 3px rgba(0,0,0,0.2);
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.50);
         border-radius: 10px;
-        padding: 15px;
         margin-bottom: 20px;
-        border: 0.5px solid lightgray;
+        
+        
+        
 
-        .line_div{
-            height: 1px;
+        // .line_div{
+        //     height: 1px;
+        //     width: 100%;
+        //     background: lightgray;
+        //     margin-top: 10px;
+        //     margin-bottom: 10px;
+            
+        // }
+        .order_id{
+           
             width: 100%;
-            background: lightgray;
-            margin-top: 10px;
-            margin-bottom: 10px;
+            font-size: .6rem;
+            
         }
         .resto_detail{
+            
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
-            position: relative;
+            background:radial-gradient(red, rgb(133, 9, 9));
+            border-radius: 0 10px 10px 0 !important;
+            vertical-align:middle;
+            justify-content: center;
+            width: 50%;
+            height: auto;
+            
         
             .back_image{
-                height: 50px;
-                width: 50px;
+                height: 100px;
+                width: 100px;
                 background-position: center;
                 background-size: cover;
                 background-repeat: no-repeat;
@@ -56,37 +134,36 @@
             .res_name{
               font-weight: 600;  
               font-size: 14px;
+              color: white;
             } 
             .res_location{
-                color: lightgray;
+                color: white;
                 font-size: 14px;
             }
 
-            .order_id{
-                position: absolute;
-                right: 5px;
-                font-size: .6rem;
-                ion-label {
-                   text-align: right;
-                }
-            }
+            
         }
 
         .order_detail{
             position: relative;
+            width: 100%;
+            padding: 20px;
 
             .head_gray{
-                color: lightgray;
+                color: black;
                 font-size: 13px;
                 margin-top: 10px;
+                font-weight: bold;
+                
             }
             .small_lbl{
                 font-size: 14px;
-                font-weight: 600;
+                font-weight: bold;
+                color: rgb(215, 4, 4);
             }
 
                 .border_bottom{
-                border-bottom: 1px dashed lightgray;
+                border-bottom: 1px solid lightgray;
                 padding: 5px 0px;
                 font-size: 15px;
                 font-weight: bold;
@@ -96,7 +173,7 @@
                 padding-bottom: 5px;
                 .food_title{
                     font-size: 15px;
-                    font-weight: bold;
+                    
                 }
                 .flex_titles{
                     display: flex;
@@ -107,26 +184,53 @@
                         color: black;
                         font-size: 12px;
                     }
+                    border: 1px solid black;
                 }
             }
 
             .prize{
+                border: 1px solid black;
                 position: absolute;
                 right: 35px;
                 font-weight: 600 !important;
             }
 
-            .payment_status{
-                position: absolute;
-                right: -15px;
-                text-transform: uppercase;
-                bottom: -15px;
-                background: var(--ion-color-primary);
-                color: white;
-                font-weight: 600;
-                padding: 8px 12px;
-                border-bottom-right-radius: 10px;
-            }
+           
         }
+
+        .payment_status{
+            width: 100%;
+            text-align: center;
+            text-transform: uppercase;
+            bottom: -15px;
+            background: var(--ion-color-primary);
+            color: white;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .payment_status.delivered {
+            background-color: green; /* Verde para 'delivered' */
+          }
+          
+          .payment_status.ongoing {
+            background-color: yellow; /* Amarillo para 'ongoing' */
+            color: black;
+        }
+          
+          .payment_status.canceled {
+            background-color: red; /* Rojo para 'canceled' */
+          }
+          
+
+        
+
+    
+   
+
     }
+
+    
+
 }

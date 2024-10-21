@@ -1,4 +1,8 @@
+
+
 <ion-content class="ion-padding">
+  
+  <div class="formContain">
   <div class="login-logo">
     <img src="assets/imgs/icon.png" class="logo_icon" alt="foodies" />
     <p class="login-name">{{'Login' | translate}}</p>
@@ -8,9 +12,10 @@
     </p>
   </div>
 
-  <form #loginForm="ngForm" novalidate>
-    <ion-list lines="none">
-      <ion-item lines="none">
+  <form #loginForm="ngForm" class="formAuth"  novalidate>
+    <ion-list lines="none" >
+      <ion-item class="inputsAuth" lines="none">
+        <label for="email">Email:</label>
         <ion-input
           [(ngModel)]="login.email"
           type="email"
@@ -32,7 +37,7 @@
         </p>
       </ion-text>
 
-      <ion-item lines="none">
+      <ion-item class="inputsAuth" lines="none">
         <ion-input
           [(ngModel)]="login.password"
           name="password"
@@ -54,28 +59,30 @@
       </ion-text>
     </ion-list>
 
-    <ion-row class="ion-no-margin ion-no-padding">
-      <ion-col class="ion-no-margin ion-no-padding">
+    
         <p class="frgTag" (click)="resetPass()">
           {{'Forgot Password?' | translate}}
         </p>
         <ion-button
-          class="btn_class"
+          class="btns"
           (click)="onLogin(loginForm)"
           type="submit"
           expand="block"
           [disabled]="isLogin"
+          style="--border-radius: 30px; --padding-top: 15px; --padding-bottom: 15px; ;"
         >
           <span *ngIf="!isLogin"> {{'Log In' | translate}}</span>
           <ion-spinner name="circles" *ngIf="isLogin"></ion-spinner>
         </ion-button>
-      </ion-col>
-    </ion-row>
+      
     <!--<div class="btns">
       <img src="assets/imgs/en.png" (click)="changeLng('en')"
         [ngClass]="getClassName() == 'en' ? 'flagActive':'flagDeactive'" alt="">
       <img src="assets/imgs/spanish.png" (click)="changeLng('spanish')"
         [ngClass]="getClassName() == 'spanish' ? 'flagActive':'flagDeactive'" alt="">
     </div>-->
-  </form></ion-content
->
+  </form>
+</div>
+</ion-content>
+
+
