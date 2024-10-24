@@ -5,7 +5,7 @@
         <ion-icon slot="icon-only" color="dark" mode="md" name="arrow-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>{{'Order Detail' | translate}}</ion-title>
+    <ion-title> {{'Order Detail' | translate}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -13,6 +13,7 @@
   <div *ngIf="!loaded" style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
     <ion-spinner color="primary" name="crescent"></ion-spinner>
   </div>
+  <div id="map"></div>
   <div class="main_content_div" *ngIf="loaded">
 
 
@@ -21,35 +22,49 @@
         <div class="back_image" [style.backgroundImage]="'url('+usercover+')'"></div>
         <div style="margin-left: 10px;">
           <ion-label class="res_name">{{username}}</ion-label>
-                   <!-- <ion-label class="res_location">{{time}}</ion-label> -->
-
+          <ion-label class="small_lbl">{{time}} </ion-label>
+        </div>
+        <div class="orderId">
+          <div class="order_id">
+            <ion-label>ID: {{id}}</ion-label>
+          </div>
         </div>
       </div>
     </div>
-    <div class="orderId">
-      <div class="order_id">
-        <ion-label>{{'Order ID' | translate}}</ion-label>
-        <ion-label>{{id}}</ion-label>
-      </div>
-    </div>
-    <div class="line_div"></div>
 
+    <div class="line_div"></div>
 
     <div class="card_div2" *ngIf="userphone">
       <div class="personal_detail">
-        <div style="display: flex;">
-          <ion-icon name="call"></ion-icon>&nbsp;&nbsp;
-          <ion-label class="res_name">{{userphone}}</ion-label>
+        <div style="display: flex; flex-direction: column; width: 50%; padding: 5px;">
+          <div style=" display:flex; padding: 10px;">
+            <ion-icon name="call"></ion-icon>&nbsp;&nbsp;
+            <ion-label class="res_name">{{userphone}}</ion-label>
+          </div>
+          <div>
+            <ion-button (click)="call()" size="small" fill="outline">Call</ion-button>
+          </div>
         </div>
-        <div>
-          <ion-button (click)="call()" size="small" fill="outline">Call</ion-button>
+
+
+        <div style="display: flex; flex-direction: column; width: 50%; padding: 5px;">
+          <div style="display: flex; padding: 10px;">
+            <ion-icon name="mail"></ion-icon>&nbsp;&nbsp;
+            <ion-label class="res_name">{{useremail}}</ion-label>
+          </div>
+          <div>
+            <ion-button (click)="mail()" size="small" fill="outline">{{'Email' | translate}}</ion-button>
+          </div>
         </div>
+
       </div>
     </div>
 
+
+
     <div class="line_div"></div>
 
-    <div class="card_div2" *ngIf="useremail">
+    <!-- <div class="card_div2" *ngIf="useremail">
       <div class="personal_detail">
         <div style="display: flex;">
           <ion-icon name="mail"></ion-icon>&nbsp;&nbsp;
@@ -59,7 +74,7 @@
           <ion-button (click)="mail()" size="small" fill="outline">{{'Email' | translate}}</ion-button>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div class="line_div"></div>
 
@@ -67,26 +82,26 @@
       <div class="personal_detail">
         <label style="font-size: 16px;">Restaurante: </label><br>
         <div style="display: flex;">
-          
+
           <ion-icon name="location"></ion-icon>&nbsp;&nbsp;
-          <ion-label (click)="open_map_vanue(latV,lngV,1)"  class="res_name">{{address}}</ion-label>
-          
+          <ion-label (click)="open_map_vanue(latV,lngV,1)" class="res_name">{{address}}</ion-label>
+
         </div>
         <div style="display: flex;"><label>{{address_details}}</label></div>
       </div>
     </div>
 
-    <span>
+    <!-- <span>
       <p style="text-align: center;font-size: 14px;font-weight: 600;">{{'TO' | translate}}</p>
-    </span>
+    </span> -->
 
     <div class="card_div2">
       <div class="personal_detail">
         <label style="font-size: 16px;">Destino: </label><br>
         <div style="display: flex;">
-          
+
           <ion-icon name="location"></ion-icon>&nbsp;&nbsp;
-          <ion-label class="res_name" (click)="open_map_vanue(latC,lngC,2)" >{{deliveryAddress}}</ion-label>
+          <ion-label class="res_name" (click)="open_map_vanue(latC,lngC,2)">{{deliveryAddress}}</ion-label>
         </div>
 
       </div>
@@ -125,15 +140,14 @@
 
           <div class="card_div4" *ngIf="!item.selectedItem || !item.selectedItem.length">
             <div class="flex_div">
-              <ion-label class="food_title">{{item.name}} X {{item.quantiy}} </ion-label>
-              <ion-label class="food_price">{{getCurrency()}}{{item.quantiy * item.price}}</ion-label>
+              <ion-label class="food_title" style="color: red; font-weight: bold;">{{item.name}} X {{item.quantiy}} - {{getCurrency()}}{{item.quantiy * item.price}}</ion-label>
             </div>
 
           </div>
 
         </span>
-        <ion-label class="head_gray">{{'ORDERED ON' | translate}}</ion-label>
-                <ion-label class="small_lbl">{{time}} </ion-label>
+        <!-- <ion-label class="head_gray">{{'ORDERED ON' | translate}}</ion-label> -->
+        
 
       </div>
     </div>
@@ -144,7 +158,8 @@
       <div class="order_detail">
         <ion-label class="small_lbl2">{{'SubTotal' | translate}}<span class="prize1">{{getCurrency()}}{{total}}</span>
         </ion-label>
-        <ion-label class="small_lbl2">{{'Delivery Charge' | translate}}<span class="prize1">{{getCurrency()}}{{deliveryCharge}}</span>
+        <ion-label class="small_lbl2">{{'Delivery Charge' | translate}}<span
+            class="prize1">{{getCurrency()}}{{deliveryCharge}}</span>
         </ion-label>
         <ion-label style="display: none;" class="small_lbl2">{{'Service Tax' | translate}}<span
             class="prize1">{{getCurrency()}}{{serviceTax}}</span>
@@ -159,15 +174,14 @@
     </div>
   </div>
 </ion-content>
-<div style="text-align: right;" *ngIf="showMap"><ion-button (click)="goMaps()">Abrir en maps</ion-button><ion-button (click)="showMap=false">X</ion-button></div>
-<ion-content *ngIf="showMap">
-  
+<!-- <div style="text-align: right;" *ngIf="showMap"><ion-button (click)="goMaps()">Abrir en maps</ion-button><ion-button (click)="showMap=false">X</ion-button></div> -->
+<!-- <ion-content *ngIf="showMap">
   
   <div id="map"></div>
   <ion-scroll scrollY="true" class="scroll">
     <div padding-horizontal id="panel"></div>
   </ion-scroll>
-</ion-content>
+</ion-content> -->
 
 <ion-footer>
   <ion-toolbar>
@@ -185,12 +199,12 @@
       <div style="width: 200px;" *ngIf="status == 'accepted'">
         <ion-select placeholder="estatus de la orden" [(ngModel)]="changeStatusOrder">
           <ion-select-option value="ongoing">{{'Ongoing' | translate}}</ion-select-option>
-         <ion-select-option value="rejected" >{{'Reject' | translate}}</ion-select-option>  
+          <ion-select-option value="rejected">{{'Reject' | translate}}</ion-select-option>
           <ion-select-option value="delivered">{{'Delivered' | translate}}</ion-select-option>
         </ion-select>
       </div>
       <div style="width: 200px;" *ngIf="status == 'ongoing'">
-        <ion-select placeholder="estatus de la orden" [(ngModel)]="changeStatusOrder"> 
+        <ion-select placeholder="estatus de la orden" [(ngModel)]="changeStatusOrder">
           <ion-select-option value="delivered">{{'Delivered' | translate}}</ion-select-option>
         </ion-select>
       </div>

@@ -12,8 +12,13 @@
     }
 
     .card_div{
+        margin-top: 20px;
         padding: 20px;
-
+        background-color: red;
+        border-radius: 30px 30px 0 0px !important;
+        
+        box-shadow: 0 -4px 6px -2px rgba(0, 0, 0, 0.3);
+        
         .resto_detail{
             display: flex;
             flex-direction: row;
@@ -21,8 +26,8 @@
             position: relative;
         
             .back_image{
-                height: 50px;
-                width: 50px;
+                height: 70px;
+                width: 70px;
                 background-position: center;
                 background-size: cover;
                 background-repeat: no-repeat;
@@ -31,8 +36,14 @@
 
             .res_name{
               font-weight: 600;  
-              font-size: 14px;
+              font-size: 16px;
+              color: white;
             } 
+            .small_lbl{
+                font-size: 14px;
+                font-weight: 600;
+                color: white;
+            }
             .res_location{
                 color: gray;
                 font-size: 14px;
@@ -41,6 +52,7 @@
             .order_id{
                 position: absolute;
                 right: 5px;
+                color: white;
                 ion-label {
                    text-align: right;
                 }
@@ -54,20 +66,22 @@
     }
 
     .card_div2{
-        padding: 10px 20px;
+        padding: 10px 10px;
         .personal_detail{
             display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            
+            justify-content: center;
             align-items: center;
 
             ion-icon{
                 font-size: 20px;
+                
                 color: var(--ion-color-primary);
             }
             ion-button {
                 --border-radius: 3px;
                 font-weight: 600;
+                width: 100%;
             }
             .res_name{
                 font-weight: 600;  
@@ -77,20 +91,19 @@
 
         .order_detail{
             .head_gray{
-                color: gray;
+                color: black;
                 font-size: 13px;
                 margin-top: 10px;
-            }
-            .small_lbl{
-                font-size: 14px;
                 font-weight: 600;
             }
+            
              .subNames{
                 border-bottom: 1px dashed lightgray;
                 padding-bottom: 10px;
                 .food_title{
                     font-size: 15px;
                     font-weight: bold;
+                    
                     .veg{
                         height: 12px;
                         width: 12px;
@@ -198,7 +211,7 @@ ion-content{
     background: rgb(229, 227, 223);
     #map {
       width: 100%;
-      height: 100%;
+      height: 50%;
       opacity: 0;
       transition: opacity 150ms ease-in;
       display: block;
@@ -210,3 +223,8 @@ ion-content{
         height: calc(100% - 250px);
       }
   }
+
+
+  
+
+  

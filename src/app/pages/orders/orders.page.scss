@@ -121,25 +121,63 @@ nav{
             width: 50%;
             height: auto;
             
+            
+            .persona{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin: 10px;
+            }
         
             .back_image{
+                
+                margin-left:10px; 
                 height: 100px;
                 width: 100px;
                 background-position: center;
                 background-size: cover;
                 background-repeat: no-repeat;
                 border-radius: 100%;
+                vertical-align: middle;
+                
             }
 
             .res_name{
               font-weight: 600;  
               font-size: 14px;
               color: white;
+              text-align: center;
+              margin-top: 10px;
+              width: 120px;
             } 
-            .res_location{
+
+            .payment_status{
+                margin-top: 20px;
+                width: 100%;
+                text-align: center;
+                text-transform: uppercase;
+                background: var(--ion-color-primary);
                 color: white;
-                font-size: 14px;
+                font-weight: 600;
+                padding: 8px 12px;
+                border-bottom-right-radius: 10px;
+                height: auto;
+                
             }
+            
+            .payment_status.delivered {
+                background-color: green; /* Verde para 'delivered' */
+              }
+              
+              .payment_status.ongoing {
+                background-color: yellow; /* Amarillo para 'ongoing' */
+                color: black;
+            }
+              
+              .payment_status.canceled {
+                background-color: red; /* Rojo para 'canceled' */
+              }
+              
 
             
         }
@@ -198,31 +236,9 @@ nav{
            
         }
 
-        .payment_status{
-            width: 100%;
-            text-align: center;
-            text-transform: uppercase;
-            bottom: -15px;
-            background: var(--ion-color-primary);
-            color: white;
-            font-weight: 600;
-            padding: 8px 12px;
-            border-bottom-right-radius: 10px;
-        }
+        
 
-        .payment_status.delivered {
-            background-color: green; /* Verde para 'delivered' */
-          }
-          
-          .payment_status.ongoing {
-            background-color: yellow; /* Amarillo para 'ongoing' */
-            color: black;
-        }
-          
-          .payment_status.canceled {
-            background-color: red; /* Rojo para 'canceled' */
-          }
-          
+        
 
         
 

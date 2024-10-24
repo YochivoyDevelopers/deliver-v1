@@ -102,6 +102,7 @@ export class OrderDetailPage implements OnInit {
       this.tab_id = data.id;
       this.id = data.id;
       this.getOrder();
+      this.open_map_vanue(this.latC, this.lngC, 2);
     });
   }
 
@@ -470,6 +471,8 @@ export class OrderDetailPage implements OnInit {
     console.log('Solicitando direcciones desde:', latitude, longitude);
     if (this.map) {
 
+      console.log('Ubicación Actual Latitude:', latitude);
+      console.log('Ubicación Actual Longitude:', longitude);
       const origin = new google.maps.LatLng(latitude, longitude);
       const destination = new google.maps.LatLng(this.latC, this.lngC);
       const waypoint = new google.maps.LatLng(this.latV, this.lngV);
@@ -514,9 +517,10 @@ export class OrderDetailPage implements OnInit {
         this.directionsDisplay.setOptions({ preserveViewport: true });
         } else {
           
-          
+          console.log('Ubicación Actual Latitude prueba:', latitude);
+          console.log('Ubicación Actual Longitude:', longitude);
           console.error('Error en la solicitud de direcciones:', status);
-          alert('No se pudieron mostrar las direcciones debido a: ' + status);
+          alert('Recalculando ');
         }
       });
     } else {

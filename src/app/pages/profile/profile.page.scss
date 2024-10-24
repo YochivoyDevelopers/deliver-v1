@@ -1,5 +1,25 @@
 .main_content_div{
     width: 100%;
+    background-color: red;
+
+    .info{
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+    }
+    .usernane{
+        text-align: center;
+        font-weight: 600;
+        font-size: 18px;
+        color: white;
+        // margin-top: 10px;
+    }
+    .location{
+        margin-top: 10px;
+        text-align: center;
+        color: white;
+        font-size: 14px;
+    }
 
     .line_div{
         width: 100%;
@@ -42,22 +62,15 @@
     }
 
     .content_div{
+        
         padding: 20px;
+        background-color: white;
+        border-radius: 30px 30px 0 0 !important;
         ion-label {
             display: block;
         }
-        .usernane{
-            text-align: center;
-            font-weight: 600;
-            font-size: 18px;
-            // margin-top: 10px;
-        }
-        .location{
-            margin-top: 10px;
-            text-align: center;
-            color: gray;
-            font-size: 14px;
-        }
+        
+        
         .pin{
             color: gray;
         }
@@ -72,7 +85,10 @@
                 border: 1px solid lightgray;
                 border-radius: 5px;
                 color: black;
-                width: 100px;
+                width: 150px;
+                font-size: 10px;
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.085);
+               
             }
         }
 
@@ -106,7 +122,9 @@
             }
 
             .review_card{
-
+                box-shadow: 0px 4px 10px rgba(0,0,0,0.50);
+                padding: 20px;
+                border-radius: 20px;
                 .user_info{
                     display: flex;
                     flex-direction: row;
@@ -154,5 +172,11 @@
             margin-top: 20px;
             font-weight: 600;
         }
+
+    }
+
+    .contenido{
+        background-color: white;
+        width: 100%;
     }
 }
