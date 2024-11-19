@@ -18,6 +18,16 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'tab2',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../inbox/inbox.module').then(m => m.InboxPageModule)
+          }
+        ]
+      },
+      {
         path: 'tab3',
         children: [
           {

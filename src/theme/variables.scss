@@ -74,6 +74,14 @@
   --ion-color-light-contrast-rgb: 0, 0, 0;
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
+  
+  /** custom red **/
+  --ion-color-custom-red: #ff0000;
+  --ion-color-custom-red-rgb: 255, 0, 0;
+  --ion-color-custom-red-contrast: #ffffff;
+  --ion-color-custom-red-contrast-rgb: 255, 255, 255;
+  --ion-color-custom-red-shade: #e00000;
+  --ion-color-custom-red-tint: #ff3333;
 }
 
 @media (prefers-color-scheme: light) {

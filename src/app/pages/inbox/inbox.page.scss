@@ -1,17 +1,46 @@
+ion-header{
+    box-shadow: none;
+}
+
+.custom-toolbar {
+    border-radius: 0 0px 0 30px;
+    background: #ff0000; /* Fondo rojo */
+    color: #ffffff; /* Texto blanco */
+    clip-path: path('M 0 0 H 100% V calc(100% - 30px) Q 50% 100% 0 calc(100% - 30px) Z'); /* Bordes redondeados en la parte inferior */
+    
+  }
+
+  .custom-title {
+    text-align: center; /* Centrar el texto */
+    font-size: 1.5rem; /* Tamaño de fuente personalizado */
+    font-weight: bold; /* Texto en negrita */
+    text-transform: uppercase; /* Convertir a mayúsculas */
+  }
+  
+  .separador{
+    background-color: #ff0000;
+    height: 30px;
+  }
+
 
 .main_content_div{
+    padding-top: 10px;
+    border-radius: 0 30px 0 0;
     width: 100%;
+    
     background: white;
     position: relative;
 
     .lower_div{
         padding:0px 20px;
         .main_div_right{
+            
             width: 100%;
             display: flex;
             justify-content: flex-end;
             position: relative;
             .msg_div{
+                
                 display: flex;
                 justify-content: flex-end;
                 width: 80%;
@@ -32,6 +61,7 @@
             }
         }
         .main_div_left{
+            
             width: 100%;
             display: flex;
             justify-content: flex-start;

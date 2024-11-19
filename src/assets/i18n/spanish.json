@@ -70,5 +70,6 @@
   "delivered": "Entregada",
   "ongoing": "En curso",
   "reject": "Rechazada",
-  "VERIFY_PW":"Contraseña incorrecta. Verifica tu contraseña"
+  "VERIFY_PW":"Contraseña incorrecta. Verifica tu contraseña",
+  "Support":"Soporte"
 }

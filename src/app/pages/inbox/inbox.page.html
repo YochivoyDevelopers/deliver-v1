@@ -1,18 +1,22 @@
-<ion-header>
-  <ion-toolbar color="danger">
+
+  <ion-toolbar color="custom-red" class="custom-toolbar">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title color="light">Support</ion-title>
+    <ion-title color="light" class="custom-tittle">Soporte</ion-title>
   </ion-toolbar>
-</ion-header>
+
+
+
 <ion-content>
+  <div class="separador">
   <div class="main_content_div">
     <div class="lower_div" #scrollMe [scrollTop]="scrollMe.scrollHeight">
       <span *ngFor="let msg of messages">
         <div class="main_div_right" *ngIf="msg.from == 'user'">
           <div class="msg_div">
             <div class="inner_msg">
+              
               {{msg.msg}}
             </div>
           </div>
@@ -21,6 +25,7 @@
 
         <div class="main_div_left" *ngIf="msg.from == 'admin'">
           <div class="msg_div">
+          
             <div class="inner_msg">
               {{msg.msg}}
             </div>
@@ -30,6 +35,7 @@
       </span>
     </div>
   </div>
+</div>
 </ion-content>
 <ion-footer>
   <ion-toolbar>
