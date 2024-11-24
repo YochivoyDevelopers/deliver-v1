@@ -1,9 +1,12 @@
 .header_div{
     display: flex;
-    vertical-align: middle;
+    align-items: center; // Alinear verticalmente los elementos
+    background-color: var(--ion-color-custom-red); // Fondo claro para destacar
+    color: var(--ion-color-light) ;
+    padding: 10px 16px;
     .head_lbl{
         margin-left: 16px;
-        margin-top: 15px;
+        
         font-size: 18px;
         font-weight: 600;
     }
@@ -13,57 +16,74 @@
     width: 100%;
 
     .back_image{
-        height: 200px;
+        height: 220px;
         width: 100%;
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
         position: relative;
+        border-bottom-left-radius: 20px; // Esquinas redondeadas para un diseño moderno
+        border-bottom-right-radius: 20px;
+        overflow: hidden;
+        
+       
 
         ion-button{
             position: absolute;
-            bottom: 20px;
-            right: 20px;
-            --background: white;
-            color: black;
-            font-weight: 600;
+        bottom: 20px;
+        right: 20px;
+        --background: rgba(255, 255, 255, 0.8); // Fondo blanco translúcido
+        color: var(--ion-color-primary);
+        font-weight: 600;
         }
     }
 
     .lower_div{
         padding: 20px;
+        background-color: white; // Fondo limpio
+
         .white_div{
-            height: 70px;
-            width: 70px;
+            height: 80px;
+            width: 80px;
+            margin: 0 auto;
             border-radius: 50%;
             background-position: center;
             background-size: cover;
             background-repeat: no-repeat;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // Sombra para resaltar
+            border: 2px solid var(--ion-color-primary);
+            
         }
 
         ion-label{
             color: gray;
+           font-size: 18px;
+        font-weight: 500;
         }
 
-        
-          
-
-       
+    
 
         .line_div{
             width: 100%;
             height: 1px;
             background: lightgray;
-            margin-top: 10px;
-            margin-bottom: 10px;
+           
+            margin: 15px 0; // Más separación entre campos
+            
         }
     }
 }
 
-.sub_btn{
-    --background: var(--ion-color-primary);
-    --border-radius: 5px;
+.sub_btn {
+    --background: red;// Gradiente atractivo
+    --border-radius: 30px; // Botón redondeado
     font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 20px; // Más separación con los campos
 }
+
+
+
+
 
 

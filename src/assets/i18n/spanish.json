@@ -71,5 +71,6 @@
   "ongoing": "En curso",
   "reject": "Rechazada",
   "VERIFY_PW":"Contraseña incorrecta. Verifica tu contraseña",
-  "Support":"Soporte"
+  "Support":"Soporte",
+  "Type a message...":"Escribe un mensaje.."
 }

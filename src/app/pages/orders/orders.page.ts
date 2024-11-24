@@ -175,4 +175,6 @@ export class OrdersPage implements OnInit {
     return this.util.getCurrecySymbol();
   }
 
+  
+
 }

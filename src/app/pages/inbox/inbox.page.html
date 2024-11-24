@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title color="light" class="custom-tittle">Soporte</ion-title>
+    <ion-title color="light" class="custom-tittle">{{'Support' | translate}}</ion-title>
   </ion-toolbar>
 
 
@@ -28,6 +28,7 @@
           
             <div class="inner_msg">
               {{msg.msg}}
+              
             </div>
           </div>
           <div class="tri_left"></div>
@@ -40,7 +41,7 @@
 <ion-footer>
   <ion-toolbar>
     <div class="footer_div">
-      <ion-input type="text" [(ngModel)]="message" placeholder="Type a message.."></ion-input>
+      <ion-input type="text" [(ngModel)]="message" placeholder="{{'Type a message...' | translate}}"></ion-input>
       <ion-icon class="send_btn" (click)="send()" name="send-sharp"></ion-icon>
     </div>
   </ion-toolbar>

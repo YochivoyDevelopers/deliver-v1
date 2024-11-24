@@ -1,8 +1,8 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar >
     <ion-buttons slot="start">
       <ion-button (click)="back()">
-        <ion-icon slot="icon-only" color="dark" mode="md" name="arrow-back-outline"></ion-icon>
+        <ion-icon slot="icon-only" color="light" mode="md" name="arrow-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title> {{'Order Detail' | translate}}</ion-title>
@@ -37,18 +37,18 @@
     <div class="card_div2" *ngIf="userphone">
       <div class="personal_detail">
         <div style="display: flex; flex-direction: column; width: 50%; padding: 5px;">
-          <div style=" display:flex; padding: 10px;">
+          <div style=" display:flex; ">
             <ion-icon name="call"></ion-icon>&nbsp;&nbsp;
             <ion-label class="res_name">{{userphone}}</ion-label>
           </div>
           <div>
-            <ion-button (click)="call()" size="small" fill="outline">Call</ion-button>
+            <ion-button (click)="call()" size="small" fill="outline">{{'Call' | translate}}</ion-button>
           </div>
         </div>
 
 
-        <div style="display: flex; flex-direction: column; width: 50%; padding: 5px;">
-          <div style="display: flex; padding: 10px;">
+        <div style="display: flex; flex-direction: column; width: 50%; padding: 5px; ">
+          <div style="display: flex; ">
             <ion-icon name="mail"></ion-icon>&nbsp;&nbsp;
             <ion-label class="res_name">{{useremail}}</ion-label>
           </div>
@@ -80,7 +80,7 @@
 
     <div class="card_div2">
       <div class="personal_detail">
-        <label style="font-size: 16px;">Restaurante: </label><br>
+        <label style="font-size: 16px;">Deploy 2: </label><br>
         <div style="display: flex;">
 
           <ion-icon name="location"></ion-icon>&nbsp;&nbsp;
@@ -195,16 +195,30 @@
         Deliver
       </ion-button>
     </div> -->
-    <div class="status_div" *ngIf="status == 'accepted' || status == 'ongoing' ">
+    <div class="status_div" *ngIf="status == 'accepted' || status == 'ongoing' || status == 'todestiny' || status == 'torestaurant' ">
       <div style="width: 200px;" *ngIf="status == 'accepted'">
-        <ion-select placeholder="estatus de la orden" [(ngModel)]="changeStatusOrder">
+        <ion-select placeholder="Estatus de la orden" [(ngModel)]="changeStatusOrder">
           <ion-select-option value="ongoing">{{'Ongoing' | translate}}</ion-select-option>
-          <ion-select-option value="rejected">{{'Reject' | translate}}</ion-select-option>
-          <ion-select-option value="delivered">{{'Delivered' | translate}}</ion-select-option>
+          <ion-select-option value="canceled">{{'Canceled' | translate}}</ion-select-option>
+          <!-- <ion-select-option value="delivered">{{'Delivered' | translate}}</ion-select-option> -->
         </ion-select>
       </div>
       <div style="width: 200px;" *ngIf="status == 'ongoing'">
-        <ion-select placeholder="estatus de la orden" [(ngModel)]="changeStatusOrder">
+        <ion-select placeholder="Estatus de la orden" [(ngModel)]="changeStatusOrder">
+          <ion-select-option value="torestaurant">{{'To Restaurant' | translate}}</ion-select-option>
+          <ion-select-option value="todestiny">{{'To Destiny' | translate}}</ion-select-option>
+          <ion-select-option value="delivered">{{'Delivered' | translate}}</ion-select-option>
+        </ion-select>
+      </div>
+      <div style="width: 200px;" *ngIf="status == 'torestaurant'">
+        <ion-select placeholder="Estatus de la orden" [(ngModel)]="changeStatusOrder">
+          <ion-select-option value="todestiny">{{'To Destiny' | translate}}</ion-select-option>
+          <ion-select-option value="delivered">{{'Delivered' | translate}}</ion-select-option>
+        </ion-select>
+      </div>
+      <div style="width: 200px;" *ngIf="status == 'todestiny'">
+        <ion-select placeholder="Estatus de la orden" [(ngModel)]="changeStatusOrder">
+          
           <ion-select-option value="delivered">{{'Delivered' | translate}}</ion-select-option>
         </ion-select>
       </div>

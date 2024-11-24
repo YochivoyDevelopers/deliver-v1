@@ -10,12 +10,20 @@ import { OneSignal } from "@ionic-native/onesignal/ngx";
 import { environment } from "src/environments/environment";
 import { NativeAudio } from "@ionic-native/native-audio/ngx";
 import { UtilService } from "./services/util.service";
+import { element } from "protractor";
+import { error } from "console";
+declare var google;
 @Component({
   selector: "app-root",
   templateUrl: "app.component.html",
   styleUrls: ["app.component.scss"]
 })
 export class AppComponent {
+  currentAddress: any;
+  currentStreet: any;
+  orders: any[];
+  dummy: any[];
+  trackingInterval: NodeJS.Timeout;
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -53,15 +61,20 @@ export class AppComponent {
         });
     }
   }
+  
   getLocation() {
     this.geolocation
       .getCurrentPosition()
       .then(resp => {
         // console.log(resp);
         // console.log('current lat', resp);
+        const lat = resp.coords.latitude;
+        const lng = resp.coords.longitude;
+
         localStorage.setItem("lat", resp.coords.latitude.toString());
         localStorage.setItem("lng", resp.coords.longitude.toString());
         this.updateLocation(resp.coords.latitude, resp.coords.longitude);
+        this.reverseGeocode(lat, lng);
       })
       .catch(error => {
         console.log("Error getting location", error);
@@ -70,10 +83,14 @@ export class AppComponent {
     let watch = this.geolocation.watchPosition();
     watch.subscribe(data => {
       console.log("aquiiiiiiiiiii",data)
+      const lat = data.coords.latitude;
+      const lng = data.coords.longitude;
+      this.getOrders();
       // console.log('live update', data);
       localStorage.setItem("lat", data.coords.latitude.toString());
       localStorage.setItem("lng", data.coords.longitude.toString());
       this.updateLocation(data.coords.latitude, data.coords.longitude);
+      this.reverseGeocode(lat, lng);
     });
   }
 
@@ -150,6 +167,120 @@ export class AppComponent {
       });
       this.oneSignal.inFocusDisplaying(2);
       this.getLocation();
+      
     });
   }
+
+  reverseGeocode(lat: number, lng: number){
+    const geocoder = new google.maps.Geocoder();
+    const latlng = {lat,lng};
+
+    geocoder.geocode({ location: latlng}, (results, status) =>{
+      if (status === 'OK'){
+        if(results[0]){
+          const addressComponents = results[0].address_components;
+          const streetComponent = addressComponents.find(component =>
+            component.types.includes("route")
+          );
+          if(streetComponent){
+            this.currentStreet = streetComponent.long_name;
+            console.log('Calle:', this.currentStreet);
+          }else{
+            console.log('No se encontro el nombre de la calle');
+            this.currentStreet = 'Calle desconocida';
+          }
+          
+        } else{
+          console.log('No se encontraron resultados');
+        }
+      } else {
+        console.error('Fallo en la geocodificacion inversa: '+status);
+      }
+    })
+
+  }
+
+  getOrders(){
+    this.orders = [];
+    this.api.getMyOrders(localStorage.getItem('uid')).then((data: any)=>{
+      this.dummy = [];
+      if(data){
+        data.forEach(element =>{
+          element.order = JSON.parse(element.order);
+
+          if(element.status === 'ongoing'  || element.status === 'torestaurant'  || element.status === 'todestiny'){
+            this.orders.push(element);
+            console.log('E'+element.id);
+            this.saveStreetToOrder(element.id);
+            console.log('Orden Ongoing:', element);
+
+          }
+
+          if (element.status === 'delivered' || element.status === 'canceled') {
+            
+            
+            this.stopTrackingStreets();  // Llamamos a stopTrackingStreets pasando el id de la orden
+          }
+          
+        });
+
+        console.log('Ordenes Ongoing:', this.orders);
+      }
+    }).catch(error => {
+      this.dummy = [];
+      console.error('Error al obtener pedidos', error);
+    })
+  }
+
+  saveStreetToOrder(orderId: string){
+    const geocoder = new google.maps.Geocoder();
+
+     // Obtener las coordenadas actuales del repartidor
+  const currentLat = parseFloat(localStorage.getItem('lat'));
+  const currentLng = parseFloat(localStorage.getItem('lng'));
+
+  if (isNaN(currentLat) || isNaN(currentLng)) {
+    console.error("No se encontraron coordenadas válidas.");
+    return;
+  }
+
+  // Convertir las coordenadas a dirección
+  geocoder.geocode({ location: { lat: currentLat, lng: currentLng } }, (results, status) => {
+    if (status === 'OK' && results[0]) {
+      // Extraer la calle
+      const street = results[0].address_components.find(component =>
+        component.types.includes('route')
+      )?.long_name;
+
+      if (street) {
+        console.log(`Calle detectada: ${street}`);
+
+        // Actualizar el historial de calles dentro de la orden
+        this.api.updateOrderStreetHistory(orderId, street).then(() => {
+          console.log(`Calle '${street}' añadida al historial de la orden con ID: ${orderId}`);
+        }).catch(error => {
+          console.error("Error al actualizar el historial de calles en la orden:", error);
+        });
+      } else {
+        console.error("No se pudo detectar la calle.");
+      }
+    } else {
+      console.error("Error al obtener la dirección:", status);
+    }
+  });
+  }
+
+
+
+  
+  stopTrackingStreets() {
+    if (this.trackingInterval) {
+      clearInterval(this.trackingInterval);
+      this.trackingInterval = null;
+      console.log("Se detuvo el rastreo de calles.");
+    }
+  }
+
+  
+  
 }

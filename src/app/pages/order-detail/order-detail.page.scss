@@ -1,5 +1,16 @@
+
+ion-header{
+    ion-toolbar{
+        --background: var(--ion-color-custom-red);
+        color: white;
+    }
+    
+}
+
 .main_content_div{
     width: 100%;
+
+    
 
     .line_div{
         height: 1px;
@@ -24,6 +35,7 @@
             flex-direction: row;
             align-items: center;
             position: relative;
+            
         
             .back_image{
                 height: 70px;
@@ -35,23 +47,28 @@
             }
 
             .res_name{
+            
               font-weight: 600;  
               font-size: 16px;
               color: white;
             } 
             .small_lbl{
+                
                 font-size: 14px;
                 font-weight: 600;
                 color: white;
             }
             .res_location{
+                
                 color: gray;
                 font-size: 14px;
             }
 
             .order_id{
+                
                 position: absolute;
                 right: 5px;
+                top: 5px;
                 color: white;
                 ion-label {
                    text-align: right;
@@ -60,22 +77,21 @@
         }
     }
     .orderId{
-        padding: 10px 20px;
+       
         font-weight: 600;  
         font-size: 14px;
     }
 
     .card_div2{
         padding: 10px 10px;
+        
         .personal_detail{
             display: flex;
-            
             justify-content: center;
             align-items: center;
 
             ion-icon{
                 font-size: 20px;
-                
                 color: var(--ion-color-primary);
             }
             ion-button {
@@ -191,6 +207,8 @@
     ion-button{
         font-weight: 600;
         --border-radius: 5px;
+        
+        --background-color: var(--ion-color-custom-red);
     }
 }
 

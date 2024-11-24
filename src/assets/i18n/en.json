@@ -71,6 +71,14 @@
     "ongoing": "En curso",
     "reject": "Rechazada",
     "Incorrect password. Verify your password":"Contraseña incorrecta. Verifica tu contraseña",
-    "Support":"Soporte"
+    "Support":"Soporte",
+    "Type a message...":"Escribe un mensaje...",
+    "Save profile":"Guardar Perfil",
+    "Call":"Llamar",
+    "To Restaurant":"Hacia el restaurante",
+    "To Destiny":"Hacia el destino",
+    "torestaurant":"hacia el restaurante",
+    "todestiny":"hacia el destino"
+    
   }
   

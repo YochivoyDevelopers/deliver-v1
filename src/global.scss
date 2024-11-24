@@ -29,6 +29,14 @@
     src: url('./assets/fonts/Poppins-Regular.ttf');
 }
 h1,p,
-body{
+body, label{
     font-family:'Poppins' ;
 }
+ion-label,
+ion-title,
+ion-text,
+ion-button,
+span {
+    font-family: 'Poppins', sans-serif !important;
+}
+

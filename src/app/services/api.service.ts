@@ -238,7 +238,44 @@ export class ApiService {
 
   public updateOrderStatus(id, value): Promise<any> {
     return new Promise<any>(async (resolve, reject) => {
-      this.adb.collection('orders').doc(id).update({ status: value }).then(async (order: any) => {
+      let statusMessage = '';
+      const currentDateTime = new Date();
+      const options: Intl.DateTimeFormatOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }
+
+     const formattedDateTime: string = currentDateTime.toLocaleDateString('es-ES', options); 
+
+
+      switch(value){
+        case 'delivered':
+          statusMessage = `El pedido fue entregado con éxito el - ${formattedDateTime}`;
+          break;
+        case 'canceled':
+          statusMessage = `El pedido fue cancelado - ${formattedDateTime}`;
+          break;
+        case 'ongoing':
+            statusMessage = `El pedido fue aceptado - ${formattedDateTime}`;
+            break;
+        case 'torestaurant':
+              statusMessage = `El repartidor va hacia el restaurante - ${formattedDateTime}`;
+              break;
+        case 'todestiny':
+              statusMessage = `El repartidor va hacia el destino - ${formattedDateTime}`;
+              break;
+        default:
+          statusMessage = "El estado del pedido ha cambiado - ${formattedDateTime}";
+          break;
+      }
+
+      this.adb.collection('orders').doc(id).update({
+        status: value, 
+        streetHistory: firebase.firestore.FieldValue.arrayUnion(statusMessage) }).then(async (order: any) => {
         resolve(order);
       }).catch(error => {
         reject(error);
@@ -246,5 +283,50 @@ export class ApiService {
     });
   }
 
+  // Método para agregar una calle al historial de una orden
+  updateOrderStreetHistory(orderId: string, street: string): Promise<any> {
+
+    const currentDateTime = new Date();
+      const options: Intl.DateTimeFormatOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }
+
+     const formattedDateTime: string = currentDateTime.toLocaleDateString('es-ES', options); 
+
+    return this.adb.collection('orders').doc(orderId).get().toPromise()
+      .then(doc => {
+        if (doc.exists) {
+          const orderData = doc.data();
+          
+          // Verificar si existe el campo 'streetHistory' y, si no, inicializarlo como un arreglo vacío
+          if (!orderData.streetHistory) {
+            orderData.streetHistory = [];
+          }
+
+          // Actualizar el historial de calles en el documento de la orden
+          return this.adb.collection('orders').doc(orderId).update({
+            streetHistory: firebase.firestore.FieldValue.arrayUnion(`El repartidor paso por la calle ${street} - ${formattedDateTime}`) // Añadir la nueva calle al arreglo
+          });
+        } else {
+          console.log(`No se encontró la orden con ID: ${orderId}`);
+          return Promise.reject("Orden no encontrada");
+        }
+      })
+      .catch(error => {
+        console.error("Error al obtener la orden o actualizar el historial de calles:", error);
+        return Promise.reject(error);
+      });
+  }
+
+   // Método para obtener las órdenes en tiempo real
+   public getOrders(uid: string) {
+    return this.adb.collection('orders', ref => ref.where('userId', '==', uid))
+      .snapshotChanges();  // Esto escucha las actualizaciones en tiempo real
+  }
   
 }
