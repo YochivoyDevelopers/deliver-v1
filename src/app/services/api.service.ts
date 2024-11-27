@@ -303,14 +303,14 @@ export class ApiService {
         if (doc.exists) {
           const orderData = doc.data();
           
-          // Verificar si existe el campo 'streetHistory' y, si no, inicializarlo como un arreglo vacío
+         
           if (!orderData.streetHistory) {
             orderData.streetHistory = [];
           }
 
-          // Actualizar el historial de calles en el documento de la orden
+         
           return this.adb.collection('orders').doc(orderId).update({
-            streetHistory: firebase.firestore.FieldValue.arrayUnion(`El repartidor paso por la calle ${street} - ${formattedDateTime}`) // Añadir la nueva calle al arreglo
+            streetHistory: firebase.firestore.FieldValue.arrayUnion(`El repartidor paso por la calle ${street} - ${formattedDateTime}`)
           });
         } else {
           console.log(`No se encontró la orden con ID: ${orderId}`);
