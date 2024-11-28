@@ -66,15 +66,14 @@ export class AppComponent {
     this.geolocation
       .getCurrentPosition()
       .then(resp => {
-        // console.log(resp);
-        // console.log('current lat', resp);
+
         const lat = resp.coords.latitude;
         const lng = resp.coords.longitude;
 
         localStorage.setItem("lat", resp.coords.latitude.toString());
         localStorage.setItem("lng", resp.coords.longitude.toString());
         this.updateLocation(resp.coords.latitude, resp.coords.longitude);
-        this.reverseGeocode(lat, lng);
+    
       })
       .catch(error => {
         console.log("Error getting location", error);
@@ -90,7 +89,7 @@ export class AppComponent {
       localStorage.setItem("lat", data.coords.latitude.toString());
       localStorage.setItem("lng", data.coords.longitude.toString());
       this.updateLocation(data.coords.latitude, data.coords.longitude);
-      this.reverseGeocode(lat, lng);
+  //    
     });
   }
 
@@ -171,34 +170,7 @@ export class AppComponent {
     });
   }
 
-  reverseGeocode(lat: number, lng: number){
-    const geocoder = new google.maps.Geocoder();
-    const latlng = {lat,lng};
 
-    geocoder.geocode({ location: latlng}, (results, status) =>{
-      if (status === 'OK'){
-        if(results[0]){
-          const addressComponents = results[0].address_components;
-          const streetComponent = addressComponents.find(component =>
-            component.types.includes("route")
-          );
-          if(streetComponent){
-            this.currentStreet = streetComponent.long_name;
-            console.log('Calle:', this.currentStreet);
-          }else{
-            console.log('No se encontro el nombre de la calle');
-            this.currentStreet = 'Calle desconocida';
-          }
-          
-        } else{
-          console.log('No se encontraron resultados');
-        }
-      } else {
-        console.error('Fallo en la geocodificacion inversa: '+status);
-      }
-    })
-
-  }
 
   getOrders(){
     this.orders = [];
@@ -235,7 +207,7 @@ export class AppComponent {
   saveStreetToOrder(orderId: string){
     const geocoder = new google.maps.Geocoder();
 
-     // Obtener las coordenadas actuales del repartidor
+
   const currentLat = parseFloat(localStorage.getItem('lat'));
   const currentLng = parseFloat(localStorage.getItem('lng'));
 
@@ -244,10 +216,10 @@ export class AppComponent {
     return;
   }
 
-  // Convertir las coordenadas a dirección
+  
   geocoder.geocode({ location: { lat: currentLat, lng: currentLng } }, (results, status) => {
     if (status === 'OK' && results[0]) {
-      // Extraer la calle
+      
       const street = results[0].address_components.find(component =>
         component.types.includes('route')
       )?.long_name;
@@ -255,7 +227,7 @@ export class AppComponent {
       if (street) {
         console.log(`Calle detectada: ${street}`);
 
-        // Actualizar el historial de calles dentro de la orden
+        
         this.api.updateOrderStreetHistory(orderId, street).then(() => {
           console.log(`Calle '${street}' añadida al historial de la orden con ID: ${orderId}`);
         }).catch(error => {
