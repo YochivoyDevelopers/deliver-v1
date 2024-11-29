@@ -191,7 +191,7 @@ export class AppComponent {
           if (element.status === 'delivered' || element.status === 'canceled') {
             
             
-            this.stopTrackingStreets();  // Llamamos a stopTrackingStreets pasando el id de la orden
+            this.stopTrackingStreets();  
           }
           
         });
