@@ -206,7 +206,8 @@ ion-content{
         opacity: 1;
       }
     }
-    .scroll{
-        height: calc(100% - 250px);
-      }
+    .scroll {
+    max-height: 100%;    // o la altura que necesites (por ejemplo 300px)
+    overflow-y: auto;
+    }
   }
