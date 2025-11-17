@@ -67,16 +67,63 @@
 ### 4. Problemas de entorno y configuración
 - **Síntoma:** Errores de compilación relacionados con Java o Android SDK.
 - **Causa:** Variables de entorno `JAVA_HOME` o `ANDROID_HOME` mal configuradas, o versiones incompatibles.
+
+### 5. Error iOS: 'OneSignalFramework/OneSignalFramework.h' file not found y problemas con CocoaPods
+- **Síntoma:** Al compilar para iOS, aparece el error:
+  ```
+  'OneSignalFramework/OneSignalFramework.h' file not found
+  ```
+  o bien:
+  ```
+  The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+  ```
+- **Causa:** Las dependencias de CocoaPods no están instaladas o actualizadas, o se está abriendo el proyecto con el archivo `.xcodeproj` en vez de `.xcworkspace`.
 - **Solución:**
-  - Usar Java JDK 17 (temurin-17.jdk) y configurar correctamente en `~/.zshrc`:
+  1. Abre una terminal y navega a la carpeta de iOS:
     ```sh
-    export JAVA_HOME="/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home"
-    export PATH="$JAVA_HOME/bin:$PATH"
-    export ANDROID_HOME="$HOME/Library/Android/sdk"
-    export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
-    export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$PATH"
+    cd platforms/ios
     ```
-  - Reiniciar la terminal o ejecutar `source ~/.zshrc`.
+  2. Instala o actualiza las dependencias de CocoaPods:
+    ```sh
+    pod install
+    ```
+    Si ves errores, ejecuta primero:
+    ```sh
+    pod deintegrate
+    pod install
+    ```
+  3. Abre el proyecto en Xcode usando el archivo `.xcworkspace` (no el `.xcodeproj`):
+    ```sh
+    open yochivoy\ Repartidor.xcworkspace
+    ```
+  4. En Xcode, selecciona tu equipo de desarrollo en la pestaña Signing & Capabilities y asegúrate de que el perfil de aprovisionamiento y el "Team" estén configurados.
+  5. Limpia el proyecto en Xcode (`Product > Clean Build Folder`) y luego compila.
+  6. Si el error persiste, revisa el archivo `Podfile` y asegúrate de que incluya la línea para OneSignal:
+    ```
+    pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'
+    ```
+    Luego repite `pod install`.
+
+  **Advertencia CocoaPods: LD_RUNPATH_SEARCH_PATHS**
+
+  Si al ejecutar `pod install` ves una advertencia sobre `LD_RUNPATH_SEARCH_PATHS`:
+
+  > The `yochivoy Repartidor [Debug/Release]` target overrides the `LD_RUNPATH_SEARCH_PATHS` build setting ...
+
+  Sigue estos pasos:
+
+  1. Abre el proyecto en Xcode usando el archivo `.xcworkspace`.
+  2. Selecciona el proyecto en el navegador de la izquierda.
+  3. Selecciona el target `yochivoy Repartidor`.
+  4. Ve a la pestaña **Build Settings**.
+  5. Busca `LD_RUNPATH_SEARCH_PATHS`.
+  6. Si aparece, edita el valor y agrega `$(inherited)` al inicio (o reemplaza el valor por solo `$(inherited)` si no tienes rutas personalizadas).
+  7. Si **no aparece** la opción, no te preocupes: Xcode está usando el valor heredado y no necesitas hacer nada.
+  8. Limpia el proyecto (**Product > Clean Build Folder**) y vuelve a compilar.
+
+  Esto asegura que los pods se enlacen correctamente y desaparezca la advertencia.
+
+---
 
 ---
 Cada uno de estos problemas fue documentado y resuelto para asegurar la correcta ejecución, build y despliegue de la app en dispositivos Android.
