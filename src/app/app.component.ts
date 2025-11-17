@@ -81,15 +81,20 @@ export class AppComponent {
 
     let watch = this.geolocation.watchPosition();
     watch.subscribe(data => {
-      console.log("aquiiiiiiiiiii",data)
-      const lat = data.coords.latitude;
-      const lng = data.coords.longitude;
-      this.getOrders();
-      // console.log('live update', data);
-      localStorage.setItem("lat", data.coords.latitude.toString());
-      localStorage.setItem("lng", data.coords.longitude.toString());
-      this.updateLocation(data.coords.latitude, data.coords.longitude);
-  //    
+      console.log("aquiiiiiiiiiii", data);
+      // watchPosition may emit a PositionError; guard before using coords
+      if (data && "coords" in data && (data as any).coords) {
+        const coords = (data as any).coords;
+        const lat = coords.latitude;
+        const lng = coords.longitude;
+        this.getOrders();
+        // console.log('live update', data);
+        localStorage.setItem("lat", coords.latitude.toString());
+        localStorage.setItem("lng", coords.longitude.toString());
+        this.updateLocation(coords.latitude, coords.longitude);
+      } else {
+        console.warn("Position watch error or missing coords", data);
+      }
     });
   }
 

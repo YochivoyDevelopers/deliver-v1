@@ -297,21 +297,50 @@ export class OrderDetailPage implements OnInit {
   }
 
   
-  open_map_vanue(type) {
+  // Supports two call signatures:
+  // open_map_vanue(type)
+  // open_map_vanue(lat, lng, type)
+  open_map_vanue(arg1: number, arg2?: number, arg3?: number) {
+    let latParam: number | undefined;
+    let lngParam: number | undefined;
+    let type: number;
+
+    if (typeof arg3 === 'number') {
+      latParam = arg1;
+      lngParam = arg2;
+      type = arg3;
+    } else {
+      type = arg1;
+    }
+
     this.typeAddress = type;
     this.showMap = true;
     this.userCircle = null;
 
+    const initialLatLng = (typeof latParam === 'number' && typeof lngParam === 'number')
+      ? { lat: latParam, lng: lngParam }
+      : null;
+
     this.geolocation.watchPosition().subscribe((resp) => {
-      const { latitude, longitude, accuracy } = resp.coords;
-      const myLatLng = { lat: latitude, lng: longitude };
-      if (!this.map) {
-        this.initMap(myLatLng);
+      // watchPosition may emit a PositionError; guard before using coords
+      if (resp && "coords" in resp && (resp as any).coords) {
+        const { latitude, longitude, accuracy } = (resp as any).coords;
+        const myLatLng = { lat: latitude, lng: longitude };
+        if (!this.map) {
+          // If caller provided lat/lng, initialize map with those; otherwise use device coords
+          this.initMap(initialLatLng ? initialLatLng : myLatLng);
+        } else {
+          console.log('El mapa ya está inicializado, no se volverá a centrar.');
+        }
+        this.updateUserCircle(latitude, longitude, accuracy);
+        this.requestDirections(latitude, longitude);
       } else {
-        console.log('El mapa ya está inicializado, no se volverá a centrar.');
+        console.warn('Position watch error or missing coords', resp);
+        // If we don't have device coords but caller provided a location, initialize map with it
+        if (!this.map && initialLatLng) {
+          this.initMap(initialLatLng);
+        }
       }
-      this.updateUserCircle(latitude, longitude, accuracy);
-      this.requestDirections(latitude, longitude);    
     });
   }
 

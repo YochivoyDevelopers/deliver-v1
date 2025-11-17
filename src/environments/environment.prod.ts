@@ -1,14 +1,14 @@
 export const environment = {
   production: true,
   firebase: {
-    apiKey: "AIzaSyA3x_tdkyCJLZZxxWiOuW6qg0aOw1vuXj4",
-    authDomain: "goby-a1996.firebaseapp.com",
-    databaseURL: "https://goby-a1996.firebaseio.com",
-    projectId: "goby-a1996",
-    storageBucket: "goby-a1996.appspot.com",
-    messagingSenderId: "540145033481",
-    appId: "1:540145033481:web:fd88d091f2e0850b8cb3d8",
-    measurementId: "G-TZXF4YDY04"
+    apiKey: "AIzaSyDiukyca-NMpzoxy5hd68inYATrm18wlPQ",
+    authDomain: "deliveryapp-54574.firebaseapp.com",
+    databaseURL: "https://deliveryapp-54574-default-rtdb.firebaseio.com",
+    projectId: "deliveryapp-54574",
+    storageBucket: "deliveryapp-54574.appspot.com",
+    messagingSenderId: "239509151869",
+    appId: "1:239509151869:web:c9dd19ccf686ea20ead114",
+    measurementId: "G-RCCQB4JT47"
   },
   onesignal: {
     appId: "473af2db-5227-471e-9f6d-cf4583f798e4",
